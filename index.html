@@ -23,7 +23,7 @@
         }
 
         /* 제목 스타일 */
-        h1, h2, h3 {
+        h1, h2 {
             font-family: Arial, sans-serif;
             font-size: 32px;
             text-align: left;
@@ -89,16 +89,24 @@
         }
 
         #paymentTable {
-            margin-bottom: 40px; /* 계산 결과 테이블 여백 추가 */
+            margin-bottom: 30px; /* 계산 결과 테이블 여백 추가 */
         }
 
-        #summaryTable {
-            margin-bottom: 40px; /* 요약 테이블 여백 추가 */
+        /* 로고 스타일 */
+        #brandLogo {
+            display: block;
+            margin: 20px auto;
+            max-width: 180px;
         }
 
     </style>
 </head>
 <body>
+    <!-- 브랜드 이미지 로고 -->
+    <a href="https://kkuda.kr" target="_blank">
+        <img id="brandLogo" src="https://contents.sixshop.com/uploadedFiles/16843/product/image_1736405643590.png" alt="브랜드 로고">
+    </a>
+
     <h1>할부이자 계산기</h1>
 
     <label for="loanAmount">상품금액(원) </label>
@@ -117,9 +125,9 @@
         <thead>
             <tr>
                 <th>총 회차</th>
-                <th>총 원금</th>
-                <th>총 이자액</th>
-                <th>총 납부액</th>
+                <th>총 원금(원)</th>
+                <th>총 이자액(원)</th>
+                <th>총 납부액(원)</th>
             </tr>
         </thead>
         <tbody>
@@ -137,10 +145,10 @@
         <thead>
             <tr>
                 <th>회차</th>
-                <th>원금 (원)</th>
-                <th>이자액 (원)</th>
-                <th>납부액 (원)</th>
-                <th>잔액 (원)</th>
+                <th>원금(원)</th>
+                <th>이자액(원)</th>
+                <th>납부액(원)</th>
+                <th>잔액(원)</th>
             </tr>
         </thead>
         <tbody>
