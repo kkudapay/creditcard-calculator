@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>할부이자 계산기</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #f9f9f9;
+        }
+
+        /* 제목 스타일 */
+        h1, h2, h3 {
+            font-family: Arial, sans-serif;
+            font-size: 32px;
+            text-align: left;
+        }
+
+        body {
+            padding: 0 10%;
+        }
+
+        @media (max-width: 767px) {
+            body {
+                padding: 0 3%;
+            }
+        }
+
+        button {
+            padding: 8px 12px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 10px;
+            margin-bottom: 30px;
+            width: 200px;
+            background-color: #000000;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        button:hover {
+            background-color: #2468e7;
+            transform: scale(1.1);
+        }
+
+        input[type="number"] {
+            padding: 6px 8px;
+            font-size: 17px;
+            width: 90%;
+            box-sizing: border-box;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        label {
+            display: inline-block;
+            width: 120px;
+            font-size: 16px;
+            margin-bottom: 5px;
+        }
+
+        @media (min-width: 768px) {
+            input[type="number"] {
+                width: 30%;
+            }
+        }
+
+        @media (max-width: 767px) {
+            label {
+                display: block;
+                margin-bottom: 10px;
+            }
+        }
+
+        #paymentTable {
+            margin-bottom: 40px; /* 계산 결과 테이블 여백 추가 */
+        }
+
+        #summaryTable {
+            margin-bottom: 40px; /* 요약 테이블 여백 추가 */
+        }
+
+    </style>
+</head>
+<body>
+    <h1>할부이자 계산기</h1>
+
+    <label for="loanAmount">상품금액(원) </label>
+    <input type="number" id="loanAmount" value=""><br><br>
+
+    <label for="annualInterestRate">연이율(%) </label>
+    <input type="number" id="annualInterestRate" value=""><br><br>
+
+    <label for="loanTerm">상환기간(개월) </label>
+    <input type="number" id="loanTerm" value=""><br><br>
+
+    <button onclick="calculate()">계산하기</button>
+
+    <h2>요약</h2>
+    <table id="summaryTable">
+        <thead>
+            <tr>
+                <th>총 회차</th>
+                <th>총 원금</th>
+                <th>총 이자액</th>
+                <th>총 납부액</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td id="summaryTotalRounds">0</td>
+                <td id="summaryTotalPrincipal">0</td>
+                <td id="summaryTotalInterest">0</td>
+                <td id="summaryTotalPaid">0</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>계산 결과</h2>
+    <table id="paymentTable">
+        <thead>
+            <tr>
+                <th>회차</th>
+                <th>원금 (원)</th>
+                <th>이자액 (원)</th>
+                <th>납부액 (원)</th>
+                <th>잔액 (원)</th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <script>
+        function calculate() {
+            const loanAmount = parseInt(document.getElementById('loanAmount').value) || 0;
+            const annualInterestRate = parseFloat(document.getElementById('annualInterestRate').value) || 0;
+            const loanTerm = parseInt(document.getElementById('loanTerm').value) || 0;
+
+            const monthlyInterestRate = (annualInterestRate / 100) / 12;
+            const principalPayment = loanTerm > 0 ? loanAmount / loanTerm : 0;
+
+            let remainingBalance = loanAmount;
+            let totalPrincipal = 0;
+            let totalInterest = 0;
+            let totalPaidAmount = 0;
+
+            const tableBody = document.getElementById('paymentTable').getElementsByTagName('tbody')[0];
+            tableBody.innerHTML = '';
+
+            for (let i = 1; i <= loanTerm; i++) {
+                const interestPayment = Math.round(remainingBalance * monthlyInterestRate);
+                const totalPayment = Math.round(principalPayment + interestPayment);
+                remainingBalance -= principalPayment;
+
+                totalPrincipal += principalPayment;
+                totalInterest += interestPayment;
+                totalPaidAmount += totalPayment;
+
+                const row = tableBody.insertRow();
+                row.insertCell(0).textContent = i;
+                row.insertCell(1).textContent = Math.round(principalPayment).toLocaleString();
+                row.insertCell(2).textContent = interestPayment.toLocaleString();
+                row.insertCell(3).textContent = totalPayment.toLocaleString();
+                row.insertCell(4).textContent = Math.round(Math.max(remainingBalance, 0)).toLocaleString();
+            }
+
+            document.getElementById('summaryTotalRounds').textContent = loanTerm;
+            document.getElementById('summaryTotalPrincipal').textContent = Math.round(totalPrincipal).toLocaleString();
+            document.getElementById('summaryTotalInterest').textContent = totalInterest.toLocaleString();
+            document.getElementById('summaryTotalPaid').textContent = totalPaidAmount.toLocaleString();
+
+            const totalRow = tableBody.insertRow();
+            totalRow.classList.add('total-row');
+            totalRow.insertCell(0).textContent = '합계';
+            totalRow.insertCell(1).textContent = Math.round(totalPrincipal).toLocaleString();
+            totalRow.insertCell(2).textContent = totalInterest.toLocaleString();
+            totalRow.insertCell(3).textContent = totalPaidAmount.toLocaleString();
+            totalRow.insertCell(4).textContent = '-';
+        }
+    </script>
+</body>
+</html>
